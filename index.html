@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amadeus Commands Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f3e8ff;
+      color: #2d1b4e;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background: linear-gradient(90deg, #6a0dad, #9b59b6);
+      color: white;
+      padding: 20px;
+      text-align: center;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .lesson, .quiz {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+    }
+
+    .lesson h2, .quiz h2 {
+      color: #6a0dad;
+      margin-bottom: 15px;
+    }
+
+    .question {
+      margin-bottom: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      transition: 0.3s;
+    }
+
+    .question p {
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .correct { background-color: #d4edda; border: 1px solid #28a745; }
+    .wrong   { background-color: #f8d7da; border: 1px solid #dc3545; }
+
+    input[type="radio"] {
+      accent-color: #6a0dad;
+      margin-right: 8px;
+    }
+
+    button {
+      background: #6a0dad;
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      margin-top: 15px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: 0.3s;
+    }
+
+    button:hover:not(:disabled) { background: #8e44ad; }
+    button:disabled { background: #b98cd9; cursor: not-allowed; }
+
+    .result {
+      margin-top: 20px;
+      font-weight: bold;
+      font-size: 1.2rem;
+      text-align: center;
+      color: #2d1b4e;
+    }
+
+    .progress-container {
+      width: 100%;
+      background: #ddd;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      height: 22px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #6a0dad, #9b59b6);
+      border-radius: 20px;
+      transition: width 0.4s ease-in-out;
+    }
+
+    .progress-text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 0;
+      left: 0;
+      font-size: 0.9rem;
+      line-height: 22px;
+      font-weight: bold;
+      color: #2d1b4e;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Amadeus Commands - Lesson & Quiz</h1>
+  </header>
+
+  <div class="container">
+    <!-- Lesson Section -->
+    <div class="lesson">
+      <h2>Lesson: Basic Amadeus Commands</h2>
+      <ul>
+        <li><b>RT</b> - Retrieve PNR (by record locator)</li>
+        <li><b>AN10DECMNLHKG</b> - Availability for Manila → Hong Kong, Dec 10</li>
+        <li><b>AN10DEC MNLHKG/AA</b> - Availability on specific airline</li>
+        <li><b>SS1Y1</b> - Sell 1 seat in Y class, line 1 of availability</li>
+        <li><b>SS2M2</b> - Sell 2 seats in M class, line 2</li>
+        <li><b>NM1PELAGIO/RONIAN MR</b> - Add passenger name</li>
+        <li><b>NM2PELAGIO/RONIAN MR/KYLA MRS</b> - Add 2 names</li>
+        <li><b>APM-09171234567</b> - Add phone contact</li>
+        <li><b>APE-email@gmail.com</b> - Add email contact</li>
+        <li><b>TKTL/10SEP</b> - Ticketing Time Limit</li>
+        <li><b>TKOK</b> - Ticketing OK, ready to issue</li>
+        <li><b>ER</b> - End and Save PNR</li>
+        <li><b>RF RONIAN</b> - Received from (who made booking)</li>
+      </ul>
+    </div>
+
+    <!-- Quiz Section -->
+    <div class="quiz">
+      <h2>Quiz Time (30 Questions)</h2>
+
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+        <div class="progress-text" id="progress-text">0%</div>
+      </div>
+
+      <div id="questions"></div>
+
+        <button id="submitBtn" onclick="checkAnswers()" disabled>Submit Quiz</button>
+        <div class="result" id="result"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      { q: "1. What command retrieves a PNR?", options: ["AN10DECMNLHKG", "RT", "SS1Y1"], answer: "RT" },
+      { q: "2. What does AN10DECMNLHKG mean?", options: ["Retrieve PNR", "Availability for Manila → Hong Kong, Dec 10", "Add passenger name"], answer: "Availability for Manila → Hong Kong, Dec 10" },
+      { q: "3. Which command shows availability on a specific airline?", options: ["AN10DEC MNLHKG/AA", "SS1Y1", "TKOK"], answer: "AN10DEC MNLHKG/AA" },
+      { q: "4. What does SS1Y1 mean?", options: ["Sell 1 seat in Y class, line 1", "Ticketing Time Limit", "End and Save PNR"], answer: "Sell 1 seat in Y class, line 1" },
+      { q: "5. What command sells 2 seats in M class, line 2?", options: ["SS2M2", "RT", "NM1PELAGIO"], answer: "SS2M2" },
+      { q: "6. How do you add passenger name Ronian Pelagio?", options: ["NM1PELAGIO/RONIAN MR", "APM-09171234567", "TKOK"], answer: "NM1PELAGIO/RONIAN MR" },
+      { q: "7. Which command adds 2 passenger names?", options: ["NM2PELAGIO/RONIAN MR/KYLA MRS", "APE-email@gmail.com", "SS1Y1"], answer: "NM2PELAGIO/RONIAN MR/KYLA MRS" },
+      { q: "8. What command is used to add phone contact?", options: ["APM-09171234567", "RT", "TKTL/10SEP"], answer: "APM-09171234567" },
+      { q: "9. Which command adds an email contact?", options: ["APE-email@gmail.com", "NM1PELAGIO", "RF RONIAN"], answer: "APE-email@gmail.com" },
+      { q: "10. What does TKTL/10SEP mean?", options: ["Ticketing Time Limit", "Ticketing OK", "Add Passenger"], answer: "Ticketing Time Limit" },
+      { q: "11. Which command means ticketing is ready to issue?", options: ["TKOK", "ER", "AN10DEC"], answer: "TKOK" },
+      { q: "12. What does ER do?", options: ["End and Save PNR", "Add phone contact", "Sell seat"], answer: "End and Save PNR" },
+      { q: "13. What command specifies who made the booking?", options: ["RF RONIAN", "TKOK", "SS2M2"], answer: "RF RONIAN" },
+      { q: "14. Which command is used before selling seats?", options: ["Check Availability", "Ticketing", "ER"], answer: "Check Availability" },
+      { q: "15. AN10DEC MNLHKG/AA is used for?", options: ["Availability on AA", "Add passenger name", "Save PNR"], answer: "Availability on AA" },
+      { q: "16. What is the purpose of SS1Y1?", options: ["Sell 1 seat Economy", "Add phone contact", "Retrieve PNR"], answer: "Sell 1 seat Economy" },
+      { q: "17. Which command means add multiple passengers?", options: ["NM2PELAGIO/RONIAN MR/KYLA MRS", "RT", "TKTL"], answer: "NM2PELAGIO/RONIAN MR/KYLA MRS" },
+      { q: "18. APM is used for?", options: ["Phone contact", "Email", "Save PNR"], answer: "Phone contact" },
+      { q: "19. APE is used for?", options: ["Add Email", "Add Passenger", "Retrieve PNR"], answer: "Add Email" },
+      { q: "20. TKOK means?", options: ["Ticketing OK", "Ticketing Time Limit", "Sell seats"], answer: "Ticketing OK" },
+      { q: "21. TKTL is followed by?", options: ["Date", "Airline Code", "Name"], answer: "Date" },
+      { q: "22. What does RF RONIAN record?", options: ["Received from", "Retrieve PNR", "Add phone"], answer: "Received from" },
+      { q: "23. What is the last step when creating a PNR?", options: ["ER", "TKTL", "RT"], answer: "ER" },
+      { q: "24. Which command gives availability with time?", options: ["AN10DEC MNLHKG1000", "RT", "APE"], answer: "AN10DEC MNLHKG1000" },
+      { q: "25. What command adds a single passenger?", options: ["NM1PELAGIO/RONIAN MR", "NM2PELAGIO", "TKOK"], answer: "NM1PELAGIO/RONIAN MR" },
+      { q: "26. What must you do before ticketing?", options: ["Check Availability", "Add Phone", "APE"], answer: "Check Availability" },
+      { q: "27. What does AN stand for?", options: ["Availability", "Add Name", "Add Number"], answer: "Availability" },
+      { q: "28. Which is correct for adding phone number?", options: ["APM-09171234567", "RT", "NM2PELAGIO"], answer: "APM-09171234567" },
+      { q: "29. To confirm ticketing is ready?", options: ["TKOK", "ER", "RF"], answer: "TKOK" },
+      { q: "30. Final command to save and exit PNR?", options: ["ER", "TKTL", "SS1Y1"], answer: "ER" }
+    ];
+
+    const quizContainer = document.getElementById("questions");
+    const submitBtn = document.getElementById("submitBtn");
+    const restartBtn = document.getElementById("restartBtn");
+
+    // Render questions
+    function renderQuiz() {
+      quizContainer.innerHTML = "";
+      questions.forEach((q, index) => {
+        const div = document.createElement("div");
+        div.classList.add("question");
+        let optionsHtml = "";
+        q.options.forEach(opt => {
+          optionsHtml += `<label><input type="radio" name="q${index}" value="${opt}" onclick="updateProgress()"> ${opt}</label><br>`;
+        });
+        div.innerHTML = `<p>${q.q}</p>${optionsHtml}`;
+        quizContainer.appendChild(div);
+      });
+    }
+    renderQuiz();
+
+    function checkAnswers() {
+      let score = 0;
+      questions.forEach((q, index) => {
+        const div = document.querySelectorAll(".question")[index];
+        const selected = document.querySelector(`input[name="q${index}"]:checked`);
+        if (selected) {
+          if (selected.value === q.answer) {
+            div.classList.add("correct");
+            score++;
+          } else {
+            div.classList.add("wrong");
+            [...div.querySelectorAll("input")].forEach(input => {
+              if (input.value === q.answer) {
+                input.parentElement.style.fontWeight = "bold";
+                input.parentElement.style.color = "#28a745";
+              }
+            });
+          }
+        }
+      });
+
+      document.getElementById("result").innerText =
+        "✅ You scored " + score + " out of " + questions.length + "!";
+
+      submitBtn.disabled = true;
+      restartBtn.style.display = "inline-block";
+    }
+
+    function updateProgress() {
+      const answered = document.querySelectorAll("input[type=radio]:checked").length;
+      const total = questions.length;
+      const percent = Math.round((answered / total) * 100);
+
+      document.getElementById("progress-bar").style.width = percent + "%";
+      document.getElementById("progress-text").innerText = percent + "%";
+
+      if (answered === total) {
+        submitBtn.disabled = false;
+      }
+    }
+
+    function restartQuiz() {
+      document.getElementById("result").innerText = "";
+      submitBtn.disabled = true;
+      restartBtn.style.display = "none";
+      renderQuiz();
+      document.getElementById("progress-bar").style.width = "0%";
+      document.getElementById("progress-text").innerText = "0%";
+    }
+  </script>
+</body>
+</html>
